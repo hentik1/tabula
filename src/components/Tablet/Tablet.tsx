@@ -1,10 +1,10 @@
 // Tablet component for draggable tablets
-import { useDraggable } from "@dnd-kit/core";
-import React from "react";
-import "./Tablet.css";
-import woodBg1 from "assets/wood1.png";
-import woodBg2 from "assets/wood2.png";
-import woodBg3 from "assets/wood3.png";
+import { useDraggable } from '@dnd-kit/core';
+import React from 'react';
+import './Tablet.css';
+import woodBg1 from 'assets/wood1.png';
+import woodBg2 from 'assets/wood2.png';
+import woodBg3 from 'assets/wood3.png';
 
 export interface TabletProps {
   id: string;
@@ -28,24 +28,24 @@ export function Tablet({ id, label }: TabletProps) {
 
   const style: React.CSSProperties = transform
     ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` ,
-        position: "absolute",
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        position: 'absolute',
         zIndex: 10,
-        touchAction: "none",
+        touchAction: 'none',
         backgroundImage: `url(${selectedWoodBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        width: "80px",
-        height: "96px",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        width: '80px',
+        height: '96px',
       }
     : {
-        position: "relative",
-        touchAction: "none",
+        position: 'relative',
+        touchAction: 'none',
         backgroundImage: `url(${selectedWoodBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        width: "80px",
-        height: "96px",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        width: '80px',
+        height: '96px',
       };
 
   return (
@@ -54,7 +54,9 @@ export function Tablet({ id, label }: TabletProps) {
       style={style}
       {...listeners}
       {...attributes}
-      className={"rounded-lg flex items-center justify-center font-bold shadow-md cursor-grab select-none tablet-label"}
+      className={
+        'rounded-lg flex items-center justify-center font-bold shadow-md cursor-grab select-none tablet-label'
+      }
     >
       {label}
     </div>

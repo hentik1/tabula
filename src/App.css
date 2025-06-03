@@ -1,4 +1,6 @@
-body, html, #root {
+body,
+html,
+#root {
   min-height: 100vh;
   min-width: 100vw;
   height: 100%;
