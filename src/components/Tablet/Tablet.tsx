@@ -37,6 +37,7 @@ export function Tablet({ id, label }: TabletProps) {
         backgroundPosition: 'center',
         width: '80px',
         height: '96px',
+        cursor: 'grabbing',
       }
     : {
         position: 'relative',
@@ -46,6 +47,7 @@ export function Tablet({ id, label }: TabletProps) {
         backgroundPosition: 'center',
         width: '80px',
         height: '96px',
+        cursor: 'pointer',
       };
 
   return (

@@ -15,7 +15,7 @@ export interface SlotProps {
 }
 
 export function Slot({ id, children, bgIndex }: SlotProps) {
-  const { setNodeRef } = useDroppable({ id });
+  const { setNodeRef, isOver } = useDroppable({ id });
   const slotBgs = [slotBg1, slotBg2, slotBg3, slotBg4, slotBg5, slotBg6];
   const selectedSlotBg = slotBgs[bgIndex % slotBgs.length];
 
@@ -31,9 +31,38 @@ export function Slot({ id, children, bgIndex }: SlotProps) {
         backgroundImage: `url(${selectedSlotBg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        transition: 'box-shadow 0.2s',
+        position: 'relative',
       }}
     >
-      {children}
+      {isOver && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'rgba(75, 74, 72, 0.31)',
+            borderRadius: '8px',
+            pointerEvents: 'none',
+            zIndex: 1,
+          }}
+        />
+      )}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 2,
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 }
