@@ -12,10 +12,10 @@ import { Slot } from 'components/Slot';
 import { playRandomWooddrop } from 'components/utils/woodSoundUtils';
 
 const ALL_TABLETS: Array<Omit<TabletProps, 'idOverride'> & { id: string }> = [
-  { id: 'tablet-money-1', label: '1' },
-  { id: 'tablet-money-2', label: '1' },
-  { id: 'tablet-money-3', label: '2' },
-  { id: 'tablet-money-4', label: '3' },
+  { id: 'tablet-money-1', label: '1', type: 'gold' },
+  { id: 'tablet-money-2', label: '1', type: 'wood' },
+  { id: 'tablet-money-3', label: '2', type: 'stone' },
+  { id: 'tablet-money-4', label: '3', type: 'wood' },
 ];
 
 function App() {
@@ -121,7 +121,7 @@ function App() {
 
             return (
               <Slot key={slotId} id={slotId} bgIndex={bgIndex}>
-                {tabletInfo && <Tablet id={tabletInfo.id} label={tabletInfo.label} />}
+                {tabletInfo && <Tablet {...tabletInfo} />}
               </Slot>
             );
           })}
