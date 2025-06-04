@@ -5,7 +5,19 @@ import Fade from '@mui/material/Fade';
 import { Tablet } from '../Tablet/Tablet';
 import type { TabletProps } from '../Tablet/Tablet';
 import './Chest.css';
-import { playChest, playSpawnChest } from 'components/utils/utils';
+import {
+  playChest,
+  playFire,
+  playSpawnChest,
+  SpriteEffect,
+  stopFire,
+  playTabletPick,
+} from 'components/utils/utils';
+import flamegray from 'assets/effects/flamegray.png';
+import flamegreen from 'assets/effects/flamegreen.png';
+import flameblue from 'assets/effects/flameblue.png';
+import flamepurple from 'assets/effects/flamepurple.png';
+import flameorange from 'assets/effects/flameorange.png';
 
 const getRandomPosition = () => {
   const padding = 40; // Prevents chest from being cut off
@@ -15,6 +27,62 @@ const getRandomPosition = () => {
   const top = Math.random() * height + padding / 2;
   return { left, top };
 };
+
+function ChestRewardFlame({
+  tablet,
+  flameSprite,
+  dropShadow,
+  delay,
+  onPick,
+}: {
+  tablet: TabletProps;
+  flameSprite: string;
+  dropShadow: string;
+  delay: number;
+  onPick: (tablet: TabletProps) => void;
+}) {
+  const [showFlame, setShowFlame] = useState(false);
+  const [showTablet, setShowTablet] = useState(false);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowFlame(true);
+      setShowTablet(true);
+    }, delay);
+    return () => clearTimeout(timeout);
+  }, [delay]);
+  return (
+    <div
+      style={{
+        position: 'relative',
+        minWidth: 260,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
+      {showFlame && (
+        <SpriteEffect
+          sprite={flameSprite}
+          frameWidth={260}
+          frameHeight={260}
+          numFrames={10}
+          frameDuration={100}
+          loop
+          style={{ zIndex: 0, opacity: 0.7, filter: dropShadow }}
+        />
+      )}
+      {showTablet && (
+        <div
+          className="chest-reward-tablet"
+          style={{ position: 'relative', zIndex: 1 }}
+          onClick={() => onPick(tablet)}
+        >
+          <Tablet {...tablet} disableDraggable />
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function Chest({ onTabletPick }: { onTabletPick: (tablet: TabletProps) => void }) {
   const [open, setOpen] = useState(false);
@@ -66,7 +134,7 @@ export function Chest({ onTabletPick }: { onTabletPick: (tablet: TabletProps) =>
   // On mount, start chest spawn logic
   useEffect(() => {
     mountedRef.current = true;
-    if (spawnCleanupRef.current) spawnCleanupRef.current(); // Clean up any previous spawn
+    if (spawnCleanupRef.current) spawnCleanupRef.current();
     spawnCleanupRef.current = startChestSpawn();
     return () => {
       mountedRef.current = false;
@@ -77,8 +145,9 @@ export function Chest({ onTabletPick }: { onTabletPick: (tablet: TabletProps) =>
   useEffect(() => {
     if (!visible) {
       setOpen(false);
+      stopFire();
       if (mountedRef.current) {
-        if (spawnCleanupRef.current) spawnCleanupRef.current(); // Clean up previous spawn
+        if (spawnCleanupRef.current) spawnCleanupRef.current();
         spawnCleanupRef.current = startChestSpawn();
       }
     }
@@ -94,6 +163,7 @@ export function Chest({ onTabletPick }: { onTabletPick: (tablet: TabletProps) =>
 
   useEffect(() => {
     if (open) {
+      playFire();
       const types: Array<'wood' | 'stone' | 'gold'> = ['wood', 'stone', 'gold'];
       const tablets = types.map((type, i) => ({
         id: `chest-reward-${type}-${Date.now()}-${i}`,
@@ -123,19 +193,36 @@ export function Chest({ onTabletPick }: { onTabletPick: (tablet: TabletProps) =>
       </Fade>
       {open && rewardTablets && (
         <div className="chest-reward-overlay">
-          <div className="chest-reward-row">
-            {rewardTablets.map((tablet) => (
-              <div
-                key={tablet.id}
-                className="chest-reward-tablet"
-                onClick={() => {
-                  onTabletPick(tablet);
-                  setVisible(false); // Hide chest and trigger respawn
-                }}
-              >
-                <Tablet {...tablet} disableDraggable />
-              </div>
-            ))}
+          <div className="chest-reward-row" style={{ position: 'relative', zIndex: 1 }}>
+            {rewardTablets.map((tablet, idx) => {
+              let flameSprite = flamegray;
+              let dropShadow = 'drop-shadow(0 0 32px #aaa)';
+              if (tablet.type === 'gold') {
+                flameSprite = flameorange;
+                dropShadow = 'drop-shadow(0 0 32px #ffb300)';
+              } else if (tablet.type === 'stone') {
+                flameSprite = flameblue;
+                dropShadow = 'drop-shadow(0 0 32px #00bfff)';
+              } else if (tablet.type === 'wood') {
+                flameSprite = flamegreen;
+                dropShadow = 'drop-shadow(0 0 32px #4caf50)';
+              }
+              return (
+                <ChestRewardFlame
+                  key={tablet.id}
+                  tablet={tablet}
+                  flameSprite={flameSprite}
+                  dropShadow={dropShadow}
+                  delay={idx * 200}
+                  onPick={(t) => {
+                    onTabletPick(t);
+                    setVisible(false);
+                    stopFire();
+                    playTabletPick();
+                  }}
+                />
+              );
+            })}
           </div>
         </div>
       )}

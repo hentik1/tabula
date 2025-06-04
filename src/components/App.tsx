@@ -156,7 +156,7 @@ function App() {
 
   // Crossfade music state
   const [started, setStarted] = useState(false);
-  const [volume, setVolume] = useState(0);
+  const [volume, setVolume] = useState(0.1);
   const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(null);
   const openSettings = Boolean(settingsAnchorEl);
   const handleSettingsClick = (event: React.MouseEvent<HTMLElement>) =>
