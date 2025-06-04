@@ -10,6 +10,8 @@ import type { TabletProps } from 'components/Tablet/Tablet';
 import { Tablet } from 'components/Tablet/Tablet';
 import { Slot } from 'components/Slot';
 import { playRandomWooddrop } from 'components/utils/woodSoundUtils';
+import coins from 'assets/coins.png';
+import { Typography } from '@mui/material';
 
 const ALL_TABLETS: Array<TabletProps> = [
   { id: 'tablet-money-1', label: '1', type: 'wood' },
@@ -160,9 +162,13 @@ function App() {
             margin: '0 auto',
             mb: 2,
             color: 'white',
-            fontSize: '40px',
+            fontSize: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
           }}
         >
+          <img src={coins} style={{ width: 30, height: 30 }} />
           {money}
         </Box>
         <div
