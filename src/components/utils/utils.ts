@@ -8,34 +8,43 @@ import woodpickup1 from 'assets/sounds/materials/woodpickup1.mp3';
 import woodpickup2 from 'assets/sounds/materials/woodpickup2.mp3';
 import woodpickup3 from 'assets/sounds/materials/woodpickup3.mp3';
 
-export function playRandomAudio(audioList: string[], volume = 0.7) {
-  const idx = Math.floor(Math.random() * audioList.length);
-  const audio = new Audio(audioList[idx]);
+// Pre-initialize Audio objects
+const chestAudio = new Audio(chest);
+const chestspawnAudio = new Audio(chestspawn);
+const slotAudio = new Audio(slot);
+const wooddropAudios = [new Audio(wooddrop2), new Audio(wooddrop3), new Audio(wooddrop4)];
+const woodpickupAudios = [new Audio(woodpickup1), new Audio(woodpickup2), new Audio(woodpickup3)];
+
+export function playAudio(audioObj: HTMLAudioElement, volume = 0.7) {
+  audioObj.currentTime = 0;
+  audioObj.volume = volume;
+  audioObj.play();
+}
+
+export function playRandomAudio(audioObjs: HTMLAudioElement[], volume = 0.7) {
+  const idx = Math.floor(Math.random() * audioObjs.length);
+  const audio = audioObjs[idx];
   audio.currentTime = 0;
   audio.volume = volume;
   audio.play();
 }
 
-
 export function playChest() {
-  playRandomAudio([chest], 0.2);
+  playAudio(chestAudio, 0.2);
 }
 
 export function playSpawnChest() {
-  playRandomAudio([chestspawn], 0.2);
+  playAudio(chestspawnAudio, 0.2);
 }
 
-const wooddropAudioFiles = [wooddrop2, wooddrop3, wooddrop4];
-const woodpickupAudioFiles = [woodpickup1, woodpickup2, woodpickup3];
-
 export function playRandomWooddrop() {
-  playRandomAudio(wooddropAudioFiles, 0.2);
+  playRandomAudio(wooddropAudios, 0.1);
 }
 
 export function playRandomWoodpickup() {
-  playRandomAudio(woodpickupAudioFiles, 0.6);
+  playRandomAudio(woodpickupAudios, 0.1);
 }
 
 export function playSlotSpawn() {
-  playRandomAudio([slot], 0.3);
+  playAudio(slotAudio, 0.3);
 }

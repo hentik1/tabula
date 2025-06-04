@@ -11,9 +11,9 @@ export interface SlotProps {
   children: React.ReactNode;
   bgIndex: number;
   ticked: boolean;
+  justAdded?: boolean;
 }
 
-// SmokeEffect: animates the smoke sprite sheet once
 function SmokeEffect() {
   const [frame, setFrame] = React.useState(0);
   const numFrames = 8;
@@ -81,9 +81,7 @@ function SmokeEffect() {
   );
 }
 
-let hasRenderedOnce = false;
-
-export function Slot({ id, children, ticked }: SlotProps) {
+export function Slot({ id, children, ticked, justAdded }: SlotProps) {
   const { setNodeRef, isOver } = useDroppable({ id });
   const [showSmoke, setShowSmoke] = React.useState(false);
   const randomColor = React.useMemo(() => {
@@ -92,15 +90,12 @@ export function Slot({ id, children, ticked }: SlotProps) {
   }, []);
 
   React.useEffect(() => {
-    if (!hasRenderedOnce) {
-      hasRenderedOnce = true;
-      setShowSmoke(false);
-      return;
+    if (justAdded) {
+      setShowSmoke(true);
+      const timer = setTimeout(() => setShowSmoke(false), 350);
+      return () => clearTimeout(timer);
     }
-    setShowSmoke(true);
-    const timer = setTimeout(() => setShowSmoke(false), 350);
-    return () => clearTimeout(timer);
-  }, []);
+  }, [justAdded]);
 
   return (
     <div ref={setNodeRef} className="slot-root">

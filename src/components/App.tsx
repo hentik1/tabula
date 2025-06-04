@@ -108,8 +108,14 @@ function App() {
     return shuffled % 6;
   }
 
+  const [justAddedSlot, setJustAddedSlot] = useState<number | null>(null);
+
   function addSlot() {
-    setNumSlots((prev) => (prev < 99 ? prev + 1 : 100));
+    setNumSlots((prev) => {
+      const next = prev < 99 ? prev + 1 : 100;
+      if (next > prev) setJustAddedSlot(next - 1);
+      return next;
+    });
   }
 
   function reduceTickrate() {
@@ -150,7 +156,7 @@ function App() {
 
   // Crossfade music state
   const [started, setStarted] = useState(false);
-  const [volume, setVolume] = useState(0.2);
+  const [volume, setVolume] = useState(0);
   const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(null);
   const openSettings = Boolean(settingsAnchorEl);
   const handleSettingsClick = (event: React.MouseEvent<HTMLElement>) =>
@@ -159,6 +165,14 @@ function App() {
   const handleStart = () => {
     setStarted(true);
   };
+
+  useEffect(() => {
+    if (justAddedSlot !== null) {
+      // Reset after a short delay to allow Slot to trigger effect
+      const t = setTimeout(() => setJustAddedSlot(null), 100);
+      return () => clearTimeout(t);
+    }
+  }, [justAddedSlot]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -258,7 +272,13 @@ function App() {
               const bgIndex = getSlotBgIndex(slotId);
               const ticked = index === tickIndex;
               return (
-                <Slot key={slotId} id={slotId} bgIndex={bgIndex} ticked={ticked}>
+                <Slot
+                  key={slotId}
+                  id={slotId}
+                  bgIndex={bgIndex}
+                  ticked={ticked}
+                  justAdded={justAddedSlot === index}
+                >
                   {tabletInfo && <Tablet {...tabletInfo} />}
                 </Slot>
               );

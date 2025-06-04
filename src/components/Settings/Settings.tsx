@@ -26,9 +26,9 @@ export function Settings({ volume, setVolume, open, anchorEl, onOpen, onClose }:
         aria-label="settings"
         onClick={onOpen}
         sx={{ color: 'white', background: 'rgba(30,30,30,0.7)' }}
-        size="large"
+        size="medium"
       >
-        <SettingsIcon fontSize="large" />
+        <SettingsIcon fontSize="medium" />
       </IconButton>
       <Popover
         open={open}
