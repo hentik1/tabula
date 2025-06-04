@@ -155,14 +155,6 @@ export function Chest({ onTabletPick }: { onTabletPick: (tablet: TabletProps) =>
 
   useEffect(() => {
     if (open) {
-      playChest();
-      const timeout = setTimeout(() => setVisible(false), 5000);
-      return () => clearTimeout(timeout);
-    }
-  }, [open]);
-
-  useEffect(() => {
-    if (open) {
       playFire();
       const types: Array<'wood' | 'stone' | 'gold'> = ['wood', 'stone', 'gold'];
       const tablets = types.map((type, i) => ({
