@@ -1,0 +1,38 @@
+/* Chest image positioning and style */
+.chest-img {
+  position: fixed;
+  width: 120px;
+  height: 120px;
+  cursor: pointer;
+  z-index: 1000;
+  user-select: none;
+  transition: filter 0.2s;
+}
+.chest-img--open {
+  cursor: default;
+}
+
+/* Overlay for reward selection */
+.chest-reward-overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 2999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chest-reward-row {
+  display: flex;
+  gap: 32px;
+  z-index: 3000;
+}
+
+.chest-reward-tablet {
+  cursor: pointer;
+  filter: drop-shadow(0 2px 8px #000);
+}

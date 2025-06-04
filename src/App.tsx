@@ -11,14 +11,18 @@ import { Tablet } from 'components/Tablet/Tablet';
 import { Slot } from 'components/Slot';
 import { playRandomWooddrop } from 'components/utils/woodSoundUtils';
 import coins from 'assets/coins.png';
-import { Typography } from '@mui/material';
+import { Chest } from './components/Chest/Chest';
+import { Inventory } from './components/Inventory';
 
-const ALL_TABLETS: Array<TabletProps> = [
-  { id: 'tablet-money-1', label: '1', type: 'wood' },
-  { id: 'tablet-money-2', label: '1', type: 'wood' },
-  { id: 'tablet-money-3', label: '2', type: 'wood' },
-  { id: 'tablet-money-4', label: '3', type: 'stone' },
-  { id: 'tablet-enhancement-1', label: 'E', type: 'gold' },
+// Add location to TabletProps
+type TabletWithLocation = TabletProps & { location: 'inventory' | number };
+
+const INITIAL_TABLETS: TabletWithLocation[] = [
+  { id: 'tablet-money-1', label: '1', type: 'wood', location: 0 },
+  { id: 'tablet-money-2', label: '1', type: 'wood', location: 1 },
+  { id: 'tablet-money-3', label: '2', type: 'wood', location: 2 },
+  { id: 'tablet-money-4', label: '3', type: 'stone', location: 3 },
+  { id: 'tablet-enhancement-1', label: 'E', type: 'gold', location: 4 },
 ];
 
 function App() {
@@ -27,47 +31,67 @@ function App() {
   const [money, setMoney] = useState<number>(0);
   const [tickrate, setTickrate] = useState<number>(1000);
   const [numSlots, setNumSlots] = useState(NUM_SLOTS);
-  const [itemsInSlots, setItemsInSlots] = useState<(string | null)[]>(() => {
-    const initialItems: (string | null)[] = Array(NUM_SLOTS).fill(null);
-    ALL_TABLETS.forEach((tablet, index) => {
-      if (index < NUM_SLOTS && index < ALL_TABLETS.length) {
-        initialItems[index] = tablet.id;
-      }
-    });
-    return initialItems;
-  });
+  // Unified tablets state
+  const [tablets, setTablets] = useState<TabletWithLocation[]>(INITIAL_TABLETS);
   const width = Math.sqrt(numSlots) * 8 + Math.sqrt(numSlots) * 90;
 
   const slotIds = Array.from({ length: numSlots }, (_, i) => `${SLOT_ID_PREFIX}${i}`);
 
+  // Inventory: tablets with location 'inventory'
+  const inventory = tablets.filter((t) => t.location === 'inventory');
+  // Board: tablets with location as a number (slot index)
+  const itemsInSlots = Array(numSlots)
+    .fill(null)
+    .map((_, idx) => {
+      const tablet = tablets.find((t) => t.location === idx);
+      return tablet ? tablet.id : null;
+    });
+
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-
     if (!over) return;
-
     const activeItemId = String(active.id);
     const targetSlotId = String(over.id);
 
-    const targetSlotIndex = parseInt(targetSlotId.substring(SLOT_ID_PREFIX.length), 10);
+    // Inventory drop logic
+    if (targetSlotId.startsWith('inv-slot-')) {
+      setTablets((prev) =>
+        prev.map((t) => (t.id === activeItemId ? { ...t, location: 'inventory' } : t)),
+      );
+      return;
+    }
 
+    const targetSlotIndex = parseInt(targetSlotId.substring(SLOT_ID_PREFIX.length), 10);
     if (isNaN(targetSlotIndex)) return;
 
-    setItemsInSlots((prevItemsInSlots) => {
-      const newItemsInSlots = [...prevItemsInSlots];
-
-      const sourceSlotIndex = prevItemsInSlots.findIndex((itemId) => itemId === activeItemId);
-
-      if (sourceSlotIndex === -1 || sourceSlotIndex === targetSlotIndex) {
-        return prevItemsInSlots;
+    setTablets((prev) => {
+      // If slot is occupied, swap
+      const tabletInTarget = prev.find((t) => t.location === targetSlotIndex);
+      const tabletToMove = prev.find((t) => t.id === activeItemId);
+      if (!tabletToMove) return prev;
+      // If tablet is already in this slot, do nothing
+      if (tabletToMove.location === targetSlotIndex) return prev;
+      // If coming from inventory, just place
+      if (tabletToMove.location === 'inventory' && !tabletInTarget) {
+        playRandomWooddrop();
+        return prev.map((t) => (t.id === activeItemId ? { ...t, location: targetSlotIndex } : t));
       }
-
-      const itemInTargetSlot = newItemsInSlots[targetSlotIndex];
-      newItemsInSlots[targetSlotIndex] = activeItemId;
-      newItemsInSlots[sourceSlotIndex] = itemInTargetSlot;
-
-      playRandomWooddrop();
-
-      return newItemsInSlots;
+      // If swapping between slots
+      if (typeof tabletToMove.location === 'number' && tabletInTarget) {
+        playRandomWooddrop();
+        return prev.map((t) => {
+          if (t.id === activeItemId) return { ...t, location: targetSlotIndex };
+          if (t.id === tabletInTarget.id) return { ...t, location: tabletToMove.location };
+          return t;
+        });
+      }
+      // If moving from slot to empty slot
+      if (typeof tabletToMove.location === 'number' && !tabletInTarget) {
+        playRandomWooddrop();
+        return prev.map((t) => (t.id === activeItemId ? { ...t, location: targetSlotIndex } : t));
+      }
+      // If moving from inventory to occupied slot, do nothing
+      return prev;
     });
   }
 
@@ -84,14 +108,6 @@ function App() {
 
   function addSlot() {
     setNumSlots((prev) => (prev < 99 ? prev + 1 : 100));
-    setItemsInSlots((prev) => {
-      const newArr = [...prev];
-      if (NUM_SLOTS > prev.length) {
-        return newArr.concat(Array(NUM_SLOTS - prev.length).fill(null));
-      } else {
-        return newArr.slice(0, NUM_SLOTS);
-      }
-    });
   }
 
   function reduceTickrate() {
@@ -114,7 +130,7 @@ function App() {
   useEffect(() => {
     if (hasTicked.current) {
       const itemIdInSlot = itemsInSlots[tickIndex];
-      const tabletInfo = ALL_TABLETS.find((t) => t.id === itemIdInSlot);
+      const tabletInfo = tablets.find((t) => t.id === itemIdInSlot);
       const value = parseInt(tabletInfo?.label ?? '');
 
       if (!isNaN(value)) {
@@ -124,6 +140,11 @@ function App() {
       hasTicked.current = true;
     }
   }, [tickIndex]);
+
+  // Add tablet from chest
+  function handleChestTabletPick(tablet: TabletProps) {
+    setTablets((prev) => [...prev, { ...tablet, location: 'inventory' }]);
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -141,6 +162,9 @@ function App() {
             Add Slots
           </Button>
         </Box>
+        {/* Chest appears randomly on the screen */}
+        <Chest onTabletPick={handleChestTabletPick} />
+        <Inventory items={inventory} />
         <Box
           sx={{
             position: 'absolute',
@@ -182,10 +206,9 @@ function App() {
         >
           {slotIds.map((slotId, index) => {
             const itemIdInSlot = itemsInSlots[index];
-            const tabletInfo = ALL_TABLETS.find((t) => t.id === itemIdInSlot);
+            const tabletInfo = tablets.find((t) => t.id === itemIdInSlot);
             const bgIndex = getSlotBgIndex(slotId);
             const ticked = index === tickIndex;
-
             return (
               <Slot key={slotId} id={slotId} bgIndex={bgIndex} ticked={ticked}>
                 {tabletInfo && <Tablet {...tabletInfo} />}

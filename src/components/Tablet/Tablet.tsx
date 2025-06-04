@@ -11,15 +11,18 @@ export interface TabletProps {
   id: string;
   label: string;
   type?: 'gold' | 'wood' | 'stone';
+  disableDraggable?: boolean;
 }
 
-export function Tablet({ id, label, type }: TabletProps) {
+export function Tablet({ id, label, type, disableDraggable }: TabletProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
 
   const handlePointerDown = (event: React.PointerEvent) => {
-    playRandomWoodpickup();
-    if (listeners && listeners.onPointerDown) {
-      listeners.onPointerDown(event);
+    if (!disableDraggable) {
+      playRandomWoodpickup();
+      if (listeners && listeners.onPointerDown) {
+        listeners.onPointerDown(event);
+      }
     }
   };
 
@@ -29,13 +32,14 @@ export function Tablet({ id, label, type }: TabletProps) {
     backgroundImage: `url(${tabletImage})`,
     ...(transform && { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }),
     ...(isDragging && { zIndex: 10 }),
+    cursor: disableDraggable ? 'pointer' : undefined,
   };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
+      {...(disableDraggable ? {} : attributes)}
       onPointerDown={handlePointerDown}
       className={`tablet-label${isDragging ? ' tablet-label--dragging' : ''}`}
     >
