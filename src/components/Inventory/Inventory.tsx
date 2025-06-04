@@ -28,7 +28,7 @@ export function Inventory({ items }: InventoryProps) {
           onChange={(e) => setNumSlots(Number(e.target.value))}
           className="inventory-slider"
         />
-        <span className="inventory-slider-label">Slots: {numSlots}</span>
+        <span className="inventory-slider-label">Inventory slots: {numSlots}</span>
       </div>
       <div
         className="inventory-grid"
