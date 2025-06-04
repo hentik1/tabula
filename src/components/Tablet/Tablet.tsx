@@ -6,10 +6,19 @@ import woodBg1 from 'assets/tablets/wood1.png';
 export interface TabletProps {
   id: string;
   label: string;
+  onPickUp?: () => void;
 }
 
-export function Tablet({ id, label }: TabletProps) {
+export function Tablet({ id, label, onPickUp }: TabletProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
+
+  // Wrap listeners to call onPickUp on pointerDown
+  const handlePointerDown = (event: React.PointerEvent) => {
+    if (onPickUp) onPickUp();
+    if (listeners && listeners.onPointerDown) {
+      listeners.onPointerDown(event);
+    }
+  };
 
   const style: React.CSSProperties = transform
     ? {
@@ -38,8 +47,8 @@ export function Tablet({ id, label }: TabletProps) {
     <div
       ref={setNodeRef}
       style={style}
-      {...listeners}
       {...attributes}
+      onPointerDown={handlePointerDown}
       className={
         'rounded-lg flex items-center justify-center font-bold shadow-md cursor-grab select-none tablet-label'
       }

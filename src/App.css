@@ -26,6 +26,9 @@ html,
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  user-select: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .logo {
