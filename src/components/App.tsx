@@ -9,14 +9,12 @@ import { ThemeProvider } from '@mui/material/styles';
 import type { TabletProps } from 'components/Tablet/Tablet';
 import { Tablet } from 'components/Tablet/Tablet';
 import { Slot } from 'components/Slot/Slot';
-import { playRandomWooddrop } from 'components/utils/woodSoundUtils';
 import coins from 'assets/coins.png';
 import { Chest } from './Chest/Chest';
 import { Inventory } from './Inventory/Inventory';
-import tabulaTheme from 'assets/sounds/music/tabulaTheme.mp3';
-import SettingsIcon from '@mui/icons-material/Settings';
-import IconButton from '@mui/material/IconButton';
-import Popover from '@mui/material/Popover';
+import { MainThemePlayer } from './MainThemePlayer/MainThemePlayer';
+import { Settings } from './Settings/Settings';
+import { playRandomWooddrop } from './utils/utils';
 
 // Add location to TabletProps
 type TabletWithLocation = TabletProps & { location: 'inventory' | number };
@@ -33,7 +31,7 @@ function App() {
   const NUM_SLOTS = 9;
   const SLOT_ID_PREFIX = 'slot-';
   const [money, setMoney] = useState<number>(0);
-  const [tickrate, setTickrate] = useState<number>(1000);
+  const [tickrate, setTickrate] = useState<number>(1091); // 110 BPM = 60000ms / 110 ≈ 545ms
   const [numSlots, setNumSlots] = useState(NUM_SLOTS);
   // Unified tablets state
   const [tablets, setTablets] = useState<TabletWithLocation[]>(INITIAL_TABLETS);
@@ -150,100 +148,29 @@ function App() {
     setTablets((prev) => [...prev, { ...tablet, location: 'inventory' }]);
   }
 
-  // Overlay state for user interaction
+  // Crossfade music state
   const [started, setStarted] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [volume, setVolume] = useState(0.2);
-
-  // Settings popover state
   const [settingsAnchorEl, setSettingsAnchorEl] = useState<null | HTMLElement>(null);
   const openSettings = Boolean(settingsAnchorEl);
-  const handleSettingsClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleSettingsClick = (event: React.MouseEvent<HTMLElement>) =>
     setSettingsAnchorEl(event.currentTarget);
-  };
-  const handleSettingsClose = () => {
-    setSettingsAnchorEl(null);
-  };
-
-  // Prepare audio element once
-  useEffect(() => {
-    audioRef.current = new Audio(tabulaTheme);
-    audioRef.current.loop = true;
-    audioRef.current.volume = volume;
-    return () => {
-      audioRef.current?.pause();
-      audioRef.current = null;
-    };
-  }, []);
-
-  // Update volume when slider changes
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
-  }, [volume]);
-
-  // Play music on start
+  const handleSettingsClose = () => setSettingsAnchorEl(null);
   const handleStart = () => {
     setStarted(true);
-    audioRef.current?.play().catch(() => {});
   };
 
   return (
     <ThemeProvider theme={theme}>
-      {started && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 16,
-            right: 24,
-            zIndex: 200,
-          }}
-        >
-          <IconButton
-            aria-label="settings"
-            onClick={handleSettingsClick}
-            sx={{ color: 'white', background: 'rgba(30,30,30,0.7)' }}
-            size="large"
-          >
-            <SettingsIcon fontSize="large" />
-          </IconButton>
-          <Popover
-            open={openSettings}
-            anchorEl={settingsAnchorEl}
-            onClose={handleSettingsClose}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            PaperProps={{
-              sx: {
-                background: 'rgba(30,30,30,0.95)',
-                color: 'white',
-                p: 2,
-                borderRadius: 2,
-                minWidth: 220,
-              },
-            }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <span style={{ fontSize: 16, minWidth: 90 }}>Music Volume</span>
-                <input
-                  type="range"
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  value={volume}
-                  onChange={(e) => setVolume(Number(e.target.value))}
-                  style={{ width: 120 }}
-                />
-                <span style={{ fontSize: 14, width: 32, textAlign: 'right' }}>
-                  {Math.round(volume * 100)}
-                </span>
-              </div>
-            </div>
-          </Popover>
-        </div>
-      )}
+      <MainThemePlayer started={started} volume={volume} />
+      <Settings
+        volume={volume}
+        setVolume={setVolume}
+        open={openSettings}
+        anchorEl={settingsAnchorEl}
+        onOpen={handleSettingsClick}
+        onClose={handleSettingsClose}
+      />
       {!started && (
         <div
           style={{

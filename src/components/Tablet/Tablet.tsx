@@ -4,8 +4,7 @@ import './Tablet.css';
 import wood from 'assets/tablets/wood1.png';
 import stone from 'assets/tablets/stone.png';
 import gold from 'assets/tablets/gold.png';
-
-import { playRandomWoodpickup } from 'components/utils/woodSoundUtils';
+import { playRandomWoodpickup } from 'components/utils/utils';
 
 export interface TabletProps {
   id: string;

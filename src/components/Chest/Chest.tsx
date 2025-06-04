@@ -4,8 +4,8 @@ import chestOpen from 'assets/chest/chestopen.png';
 import Fade from '@mui/material/Fade';
 import { Tablet } from '../Tablet/Tablet';
 import type { TabletProps } from '../Tablet/Tablet';
-import { playChest, playSpawnChest } from '../utils/chestSoundUtils';
 import './Chest.css';
+import { playChest, playSpawnChest } from 'components/utils/utils';
 
 const getRandomPosition = () => {
   const padding = 40; // Prevents chest from being cut off
