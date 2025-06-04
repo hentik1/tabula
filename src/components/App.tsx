@@ -224,7 +224,6 @@ function App() {
               Add Slots
             </Button>
           </Box>
-          {/* Chest appears randomly on the screen */}
           <Chest onTabletPick={handleChestTabletPick} />
           <Inventory items={inventory} />
           <Box
