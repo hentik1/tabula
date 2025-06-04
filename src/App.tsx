@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import theme from './theme';
@@ -9,13 +9,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import type { TabletProps } from 'components/Tablet/Tablet';
 import { Tablet } from 'components/Tablet/Tablet';
 import { Slot } from 'components/Slot';
-import wooddrop1 from 'assets/sounds/materials/wooddrop.mp3';
-import wooddrop2 from 'assets/sounds/materials/wooddrop2.mp3';
-import wooddrop3 from 'assets/sounds/materials/wooddrop3.mp3';
-import wooddrop4 from 'assets/sounds/materials/wooddrop4.mp3';
-import woodpickup1 from 'assets/sounds/materials/woodpickup1.mp3';
-import woodpickup2 from 'assets/sounds/materials/woodpickup2.mp3';
-import woodpickup3 from 'assets/sounds/materials/woodpickup3.mp3';
+import { playRandomWooddrop } from 'components/utils/woodSoundUtils';
 
 const ALL_TABLETS: Array<Omit<TabletProps, 'idOverride'> & { id: string }> = [
   { id: 'tablet-money-1', label: '1' },
@@ -40,36 +34,6 @@ function App() {
   const width = Math.sqrt(numSlots) * 8 + Math.sqrt(numSlots) * 90;
 
   const slotIds = Array.from({ length: numSlots }, (_, i) => `${SLOT_ID_PREFIX}${i}`);
-
-  const wooddropAudios = useRef([
-    new Audio(wooddrop1),
-    new Audio(wooddrop2),
-    new Audio(wooddrop3),
-    new Audio(wooddrop4),
-  ]);
-  const woodpickupAudios = useRef([
-    new Audio(woodpickup1),
-    new Audio(woodpickup2),
-    new Audio(woodpickup3),
-  ]);
-
-  function playRandomWooddrop() {
-    const audios = wooddropAudios.current;
-    const idx = Math.floor(Math.random() * audios.length);
-    const audio = audios[idx];
-    audio.currentTime = 0;
-    audio.volume = 0.7;
-    audio.play();
-  }
-
-  function playRandomWoodpickup() {
-    const audios = woodpickupAudios.current;
-    const idx = Math.floor(Math.random() * audios.length);
-    const audio = audios[idx];
-    audio.currentTime = 0;
-    audio.volume = 0.7;
-    audio.play();
-  }
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -96,7 +60,7 @@ function App() {
       newItemsInSlots[targetSlotIndex] = activeItemId;
       newItemsInSlots[sourceSlotIndex] = itemInTargetSlot;
 
-      playRandomWooddrop(); // Play sound on successful move
+      playRandomWooddrop();
 
       return newItemsInSlots;
     });
@@ -157,13 +121,7 @@ function App() {
 
             return (
               <Slot key={slotId} id={slotId} bgIndex={bgIndex}>
-                {tabletInfo && (
-                  <Tablet
-                    id={tabletInfo.id}
-                    label={tabletInfo.label}
-                    onPickUp={playRandomWoodpickup}
-                  />
-                )}
+                {tabletInfo && <Tablet id={tabletInfo.id} label={tabletInfo.label} />}
               </Slot>
             );
           })}

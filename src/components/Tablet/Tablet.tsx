@@ -2,19 +2,18 @@ import { useDraggable } from '@dnd-kit/core';
 import React from 'react';
 import './Tablet.css';
 import woodBg1 from 'assets/tablets/wood1.png';
+import { playRandomWoodpickup } from 'components/utils/woodSoundUtils';
 
 export interface TabletProps {
   id: string;
   label: string;
-  onPickUp?: () => void;
 }
 
-export function Tablet({ id, label, onPickUp }: TabletProps) {
+export function Tablet({ id, label }: TabletProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
 
-  // Wrap listeners to call onPickUp on pointerDown
   const handlePointerDown = (event: React.PointerEvent) => {
-    if (onPickUp) onPickUp();
+    playRandomWoodpickup();
     if (listeners && listeners.onPointerDown) {
       listeners.onPointerDown(event);
     }
