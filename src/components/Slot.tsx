@@ -7,9 +7,10 @@ export interface SlotProps {
   id: string;
   children: React.ReactNode;
   bgIndex: number;
+  ticked: boolean;
 }
 
-export function Slot({ id, children }: SlotProps) {
+export function Slot({ id, children, ticked }: SlotProps) {
   const { setNodeRef, isOver } = useDroppable({ id });
 
   const randomColor = React.useMemo(() => {
@@ -91,6 +92,20 @@ export function Slot({ id, children }: SlotProps) {
             height: '100%',
             background: 'rgba(75, 74, 72, 0.31)',
             borderRadius: '8px',
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+      {ticked && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'black',
+            opacity: 0.5,
             pointerEvents: 'none',
           }}
         />
