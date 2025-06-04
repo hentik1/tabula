@@ -39,7 +39,6 @@ export function Slot({ id, children }: SlotProps) {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          zIndex: 0,
           pointerEvents: 'none',
         }}
       />
@@ -51,8 +50,6 @@ export function Slot({ id, children }: SlotProps) {
           width: '100%',
           height: '100%',
           background: randomColor,
-          opacity: 0.8,
-          zIndex: 1,
           pointerEvents: 'none',
         }}
       />
@@ -60,7 +57,6 @@ export function Slot({ id, children }: SlotProps) {
       <div
         style={{
           position: 'relative',
-          zIndex: 2,
           width: '100%',
           height: '100%',
           display: 'flex',
@@ -81,7 +77,6 @@ export function Slot({ id, children }: SlotProps) {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          zIndex: 3,
           pointerEvents: 'none',
         }}
       />
@@ -96,7 +91,6 @@ export function Slot({ id, children }: SlotProps) {
             height: '100%',
             background: 'rgba(75, 74, 72, 0.31)',
             borderRadius: '8px',
-            zIndex: 4,
             pointerEvents: 'none',
           }}
         />

@@ -22,6 +22,7 @@ export function Tablet({ id, label }: TabletProps) {
         width: '80px',
         height: '96px',
         cursor: 'grabbing',
+        zIndex: '10',
       }
     : {
         position: 'relative',

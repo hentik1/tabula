@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Box from '@mui/material/Box';
-import Slider from '@mui/material/Slider';
+import Button from '@mui/material/Button';
 import theme from './theme';
 import './App.css';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
@@ -13,11 +13,12 @@ import { Slot } from 'components/Slot';
 const ALL_TABLETS: Array<Omit<TabletProps, 'idOverride'> & { id: string }> = [
   { id: 'tablet-money-1', label: '1' },
   { id: 'tablet-money-2', label: '1' },
-  { id: 'tablet-enhancement', label: 'E' },
+  { id: 'tablet-money-3', label: '2' },
+  { id: 'tablet-money-4', label: '3' },
 ];
 
 function App() {
-  const NUM_SLOTS = 49;
+  const NUM_SLOTS = 9;
   const SLOT_ID_PREFIX = 'slot-';
   const [numSlots, setNumSlots] = useState(NUM_SLOTS);
   const [itemsInSlots, setItemsInSlots] = useState<(string | null)[]>(() => {
@@ -73,40 +74,33 @@ function App() {
     return shuffled % 6;
   }
 
+  function addSlot() {
+    setNumSlots((prev) => (prev < 99 ? prev + 1 : 100));
+    setItemsInSlots((prev) => {
+      const newArr = [...prev];
+      if (NUM_SLOTS > prev.length) {
+        return newArr.concat(Array(NUM_SLOTS - prev.length).fill(null));
+      } else {
+        return newArr.slice(0, NUM_SLOTS);
+      }
+    });
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <DndContext onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-        <Box sx={{ width: 400, margin: '0 auto', mb: 2 }}>
-          <Slider
-            value={numSlots}
-            min={9}
-            max={100}
-            step={1}
-            marks={[
-              { value: 9, label: '9' },
-              { value: 49, label: '49' },
-              { value: 100, label: '100' },
-            ]}
-            onChange={(_, value) => {
-              if (typeof value === 'number') {
-                setNumSlots(value);
-                setItemsInSlots((prev) => {
-                  const newArr = [...prev];
-                  if (value > prev.length) {
-                    return newArr.concat(Array(value - prev.length).fill(null));
-                  } else {
-                    return newArr.slice(0, value);
-                  }
-                });
-              }
-            }}
-            valueLabelDisplay="auto"
-            sx={{
-              color: '#fff',
-              '& .MuiSlider-markLabel': { color: '#fff' },
-              '& .MuiSlider-valueLabel': { color: '#fff' },
-            }}
-          />
+        <Box
+          sx={{
+            position: 'absolute',
+            left: '1/2',
+            top: '10px',
+            margin: '0 auto',
+            mb: 2,
+          }}
+        >
+          <Button variant="outlined" onClick={addSlot}>
+            Add Slots
+          </Button>
         </Box>
         <div
           style={{
