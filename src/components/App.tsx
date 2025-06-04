@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import theme from './theme';
+import theme from '../theme';
 import './App.css';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { ThemeProvider } from '@mui/material/styles';
 import type { TabletProps } from 'components/Tablet/Tablet';
 import { Tablet } from 'components/Tablet/Tablet';
-import { Slot } from 'components/Slot';
+import { Slot } from 'components/Slot/Slot';
 import { playRandomWooddrop } from 'components/utils/woodSoundUtils';
 import coins from 'assets/coins.png';
-import { Chest } from './components/Chest/Chest';
-import { Inventory } from './components/Inventory';
+import { Chest } from './Chest/Chest';
+import { Inventory } from './Inventory/Inventory';
 
 // Add location to TabletProps
 type TabletWithLocation = TabletProps & { location: 'inventory' | number };

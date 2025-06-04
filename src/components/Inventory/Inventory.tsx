@@ -1,6 +1,5 @@
-import React from 'react';
-import { Slot } from './Slot';
-import { Tablet, type TabletProps } from './Tablet/Tablet';
+import { Slot } from '../Slot/Slot';
+import { Tablet, type TabletProps } from '../Tablet/Tablet';
 
 export interface InventoryProps {
   items: (TabletProps | null)[];
@@ -9,8 +8,7 @@ export interface InventoryProps {
 
 const NUM_INVENTORY_SLOTS = 9;
 
-export function Inventory({ items, onDropToSlot }: InventoryProps) {
-  // Always 9 slots, each can be null or a TabletProps
+export function Inventory({ items }: InventoryProps) {
   return (
     <div
       style={{
