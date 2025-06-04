@@ -8,9 +8,10 @@ export interface SlotProps {
   id: string;
   children: React.ReactNode;
   bgIndex: number;
+  ticked: boolean;
 }
 
-export function Slot({ id, children }: SlotProps) {
+export function Slot({ id, children, ticked }: SlotProps) {
   const { setNodeRef, isOver } = useDroppable({ id });
 
   const randomColor = React.useMemo(() => {
@@ -25,6 +26,7 @@ export function Slot({ id, children }: SlotProps) {
       <div className="slot-content">{children}</div>
       <img src={slotframe} alt="slot frame" className="slot-frame" />
       {isOver && <div className="slot-dragover" />}
+      {ticked && <div className="slot-ticked" />}
     </div>
   );
 }
