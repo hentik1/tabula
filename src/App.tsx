@@ -9,6 +9,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import type { TabletProps } from 'components/Tablet/Tablet';
 import { Tablet } from 'components/Tablet/Tablet';
 import { Slot } from 'components/Slot';
+import { playRandomWooddrop } from 'components/utils/woodSoundUtils';
 
 const ALL_TABLETS: Array<TabletProps> = [
   { id: 'tablet-money-1', label: '1' },
@@ -61,6 +62,8 @@ function App() {
       const itemInTargetSlot = newItemsInSlots[targetSlotIndex];
       newItemsInSlots[targetSlotIndex] = activeItemId;
       newItemsInSlots[sourceSlotIndex] = itemInTargetSlot;
+
+      playRandomWooddrop();
 
       return newItemsInSlots;
     });
