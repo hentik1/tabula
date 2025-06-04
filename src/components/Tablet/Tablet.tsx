@@ -1,38 +1,22 @@
-// Tablet component for draggable tablets
 import { useDraggable } from '@dnd-kit/core';
 import React from 'react';
 import './Tablet.css';
-import woodBg1 from 'assets/wood1.png';
-import woodBg2 from 'assets/wood2.png';
-import woodBg3 from 'assets/wood3.png';
+import woodBg1 from 'assets/tablets/wood1.png';
 
 export interface TabletProps {
   id: string;
   label: string;
 }
 
-// Deterministic hash function for string to int
-function hashStringToInt(str: string, max: number) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash) % max;
-}
-
 export function Tablet({ id, label }: TabletProps) {
-  const woodBgs = [woodBg1, woodBg2, woodBg3];
-  const selectedWoodBg = woodBgs[hashStringToInt(id, woodBgs.length)];
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
 
   const style: React.CSSProperties = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
         position: 'absolute',
-        zIndex: 10,
         touchAction: 'none',
-        backgroundImage: `url(${selectedWoodBg})`,
+        backgroundImage: `url(${woodBg1})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         width: '80px',
@@ -42,7 +26,7 @@ export function Tablet({ id, label }: TabletProps) {
     : {
         position: 'relative',
         touchAction: 'none',
-        backgroundImage: `url(${selectedWoodBg})`,
+        backgroundImage: `url(${woodBg1})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         width: '80px',

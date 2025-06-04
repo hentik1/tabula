@@ -1,12 +1,7 @@
-// Slot component for droppable slots
 import { useDroppable } from '@dnd-kit/core';
 import React from 'react';
-import slotBg1 from 'assets/slot1.png';
-import slotBg2 from 'assets/slot2.png';
-import slotBg3 from 'assets/slot3.png';
-import slotBg4 from 'assets/slot4.png';
-import slotBg5 from 'assets/slot5.png';
-import slotBg6 from 'assets/slot6.png';
+import slotbg from 'assets/slots/slotbg.png';
+import slotframe from 'assets/slots/slotframe.png';
 
 export interface SlotProps {
   id: string;
@@ -14,10 +9,13 @@ export interface SlotProps {
   bgIndex: number;
 }
 
-export function Slot({ id, children, bgIndex }: SlotProps) {
+export function Slot({ id, children }: SlotProps) {
   const { setNodeRef, isOver } = useDroppable({ id });
-  const slotBgs = [slotBg1, slotBg2, slotBg3, slotBg4, slotBg5, slotBg6];
-  const selectedSlotBg = slotBgs[bgIndex % slotBgs.length];
+
+  const randomColor = React.useMemo(() => {
+    const hue = Math.floor(Math.random() * 360);
+    return `hsla(${hue}, 80%, 60%, 0.003)`;
+  }, []);
 
   return (
     <div
@@ -25,31 +23,40 @@ export function Slot({ id, children, bgIndex }: SlotProps) {
       style={{
         width: '90px',
         height: '108px',
+        position: 'relative',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundImage: `url(${selectedSlotBg})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        transition: 'box-shadow 0.2s',
-        position: 'relative',
       }}
     >
-      {isOver && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            background: 'rgba(75, 74, 72, 0.31)',
-            borderRadius: '8px',
-            pointerEvents: 'none',
-            zIndex: 1,
-          }}
-        />
-      )}
+      <img
+        src={slotbg}
+        alt="slot background"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: 0,
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: randomColor,
+          opacity: 0.8,
+          zIndex: 1,
+          pointerEvents: 'none',
+        }}
+      />
+      {/* Children content */}
       <div
         style={{
           position: 'relative',
@@ -63,6 +70,37 @@ export function Slot({ id, children, bgIndex }: SlotProps) {
       >
         {children}
       </div>
+      {/* Slot frame layer */}
+      <img
+        src={slotframe}
+        alt="slot frame"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: 3,
+          pointerEvents: 'none',
+        }}
+      />
+      {/* Drag-over effect (optional, above frame) */}
+      {isOver && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'rgba(75, 74, 72, 0.31)',
+            borderRadius: '8px',
+            zIndex: 4,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
     </div>
   );
 }
