@@ -20,29 +20,12 @@ export function Tablet({ id, label, onPickUp }: TabletProps) {
     }
   };
 
-  const style: React.CSSProperties = transform
-    ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        position: 'absolute',
-        touchAction: 'none',
-        backgroundImage: `url(${woodBg1})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        width: '80px',
-        height: '96px',
-        cursor: 'grabbing',
-        zIndex: '10',
-      }
-    : {
-        position: 'relative',
-        touchAction: 'none',
-        backgroundImage: `url(${woodBg1})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        width: '80px',
-        height: '96px',
-        cursor: 'pointer',
-      };
+  const isDragging = !!transform;
+  const style: React.CSSProperties = {
+    backgroundImage: `url(${woodBg1})`,
+    ...(transform && { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }),
+    ...(isDragging && { zIndex: 10 }),
+  };
 
   return (
     <div
@@ -50,9 +33,7 @@ export function Tablet({ id, label, onPickUp }: TabletProps) {
       style={style}
       {...attributes}
       onPointerDown={handlePointerDown}
-      className={
-        'rounded-lg flex items-center justify-center font-bold shadow-md cursor-grab select-none tablet-label'
-      }
+      className={`tablet-label${isDragging ? ' tablet-label--dragging' : ''}`}
     >
       {label}
     </div>

@@ -1,9 +1,24 @@
+/* Shared tablet styles */
 .tablet-label {
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  height: 100%;
-  width: 100%;
+  height: 96px;
+  width: 80px;
+  font-weight: bold;
+  cursor: grab;
+  user-select: none;
+  position: relative;
+  touch-action: none;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Dragging state */
+.tablet-label--dragging {
+  position: absolute;
+  cursor: grabbing;
+  z-index: 10;
 }
