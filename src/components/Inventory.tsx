@@ -20,7 +20,7 @@ export function Inventory({ items, onDropToSlot }: InventoryProps) {
         transform: 'translateX(-50%)',
         display: 'flex',
         gap: 12,
-        zIndex: 20,
+        zIndex: 1,
         background: 'rgba(30,30,30,0.7)',
         borderRadius: 12,
         padding: '12px 24px',
