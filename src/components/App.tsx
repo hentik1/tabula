@@ -31,17 +31,16 @@ function App() {
   const NUM_SLOTS = 9;
   const SLOT_ID_PREFIX = 'slot-';
   const [money, setMoney] = useState<number>(0);
-  const [tickrate, setTickrate] = useState<number>(1091); // 110 BPM = 60000ms / 110 ≈ 545ms
+  const [tickrate, setTickrate] = useState<number>(1000);
   const [numSlots, setNumSlots] = useState(NUM_SLOTS);
-  // Unified tablets state
+
   const [tablets, setTablets] = useState<TabletWithLocation[]>(INITIAL_TABLETS);
   const width = Math.sqrt(numSlots) * 8 + Math.sqrt(numSlots) * 90;
 
   const slotIds = Array.from({ length: numSlots }, (_, i) => `${SLOT_ID_PREFIX}${i}`);
 
-  // Inventory: tablets with location 'inventory'
   const inventory = tablets.filter((t) => t.location === 'inventory');
-  // Board: tablets with location as a number (slot index)
+
   const itemsInSlots = Array(numSlots)
     .fill(null)
     .map((_, idx) => {
@@ -67,19 +66,21 @@ function App() {
     if (isNaN(targetSlotIndex)) return;
 
     setTablets((prev) => {
-      // If slot is occupied, swap
       const tabletInTarget = prev.find((t) => t.location === targetSlotIndex);
       const tabletToMove = prev.find((t) => t.id === activeItemId);
+
       if (!tabletToMove) return prev;
+
       // If tablet is already in this slot, do nothing
       if (tabletToMove.location === targetSlotIndex) return prev;
+
       // If coming from inventory, just place
       if (tabletToMove.location === 'inventory' && !tabletInTarget) {
         playRandomWooddrop();
         return prev.map((t) => (t.id === activeItemId ? { ...t, location: targetSlotIndex } : t));
       }
-      // If swapping between slots
-      if (typeof tabletToMove.location === 'number' && tabletInTarget) {
+      // Swapping
+      if (tabletInTarget) {
         playRandomWooddrop();
         return prev.map((t) => {
           if (t.id === activeItemId) return { ...t, location: targetSlotIndex };
@@ -92,20 +93,8 @@ function App() {
         playRandomWooddrop();
         return prev.map((t) => (t.id === activeItemId ? { ...t, location: targetSlotIndex } : t));
       }
-      // If moving from inventory to occupied slot, do nothing
       return prev;
     });
-  }
-
-  function getSlotBgIndex(slotId: string) {
-    // Pseudo-random but stable per slot, using a better hash
-    let hash = 5381;
-    for (let i = 0; i < slotId.length; i++) {
-      hash = (hash << 5) + hash + slotId.charCodeAt(i); // hash * 33 + c
-    }
-    // Use a large prime to shuffle the result
-    const shuffled = Math.abs((hash * 2654435761) % 4294967296);
-    return shuffled % 6;
   }
 
   const [justAddedSlot, setJustAddedSlot] = useState<number | null>(null);
@@ -165,14 +154,6 @@ function App() {
   const handleStart = () => {
     setStarted(true);
   };
-
-  useEffect(() => {
-    if (justAddedSlot !== null) {
-      // Reset after a short delay to allow Slot to trigger effect
-      const t = setTimeout(() => setJustAddedSlot(null), 100);
-      return () => clearTimeout(t);
-    }
-  }, [justAddedSlot]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -268,16 +249,9 @@ function App() {
             {slotIds.map((slotId, index) => {
               const itemIdInSlot = itemsInSlots[index];
               const tabletInfo = tablets.find((t) => t.id === itemIdInSlot);
-              const bgIndex = getSlotBgIndex(slotId);
               const ticked = index === tickIndex;
               return (
-                <Slot
-                  key={slotId}
-                  id={slotId}
-                  bgIndex={bgIndex}
-                  ticked={ticked}
-                  justAdded={justAddedSlot === index}
-                >
+                <Slot key={slotId} id={slotId} ticked={ticked} justAdded={justAddedSlot === index}>
                   {tabletInfo && <Tablet {...tabletInfo} />}
                 </Slot>
               );

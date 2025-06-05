@@ -38,7 +38,7 @@ export function Inventory({ items }: InventoryProps) {
         }}
       >
         {Array.from({ length: numSlots }).map((_, idx) => (
-          <Slot key={idx} id={`inv-slot-${idx}`} bgIndex={0} ticked={false}>
+          <Slot key={idx} id={`inv-slot-${idx}`} ticked={false}>
             {items[idx] ? <Tablet {...items[idx]!} disableDraggable={false} /> : null}
           </Slot>
         ))}

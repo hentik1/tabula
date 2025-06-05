@@ -9,7 +9,6 @@ import './Slot.css';
 export interface SlotProps {
   id: string;
   children: React.ReactNode;
-  bgIndex: number;
   ticked: boolean;
   justAdded?: boolean;
 }
